@@ -17,7 +17,20 @@ OS_TYPE="unknown"
 case "$(uname -s)" in
     Linux*)     OS_TYPE="linux";;
     Darwin*)    OS_TYPE="macos";;
+    CYGWIN*|MINGW*|MSYS*) OS_TYPE="windows";;
 esac
+
+if [ "$OS_TYPE" = "linux" ] && grep -qEi "(Microsoft|WSL)" /proc/version 2>/dev/null; then
+    echo "Error: You are running Windows Subsystem for Linux (WSL)."
+    echo "To configure your Windows IDEs, please open PowerShell and use the Windows installer script."
+    exit 1
+fi
+
+if [ "$OS_TYPE" = "windows" ] || [ "$OS_TYPE" = "unknown" ]; then
+    echo "Error: This bash script is exclusively for macOS and native Linux."
+    echo "Please use the Windows installer script."
+    exit 1
+fi
 
 echo "Connecting to repository to find available IDEs..."
 TEMP_DIR=$(mktemp -d)
@@ -43,7 +56,8 @@ for i in "${!IDE_ARRAY[@]}"; do
     echo "  $NUM) ${IDE_ARRAY[$i]}"
 done
 
-read -p "Select (1-$COUNT): " IDE_CHOICE
+# FIX: Explicitly read from terminal so piped curl doesn't break it
+read -p "Select (1-$COUNT): " IDE_CHOICE </dev/tty
 
 if ! [[ "$IDE_CHOICE" =~ ^[0-9]+$ ]] || [ "$IDE_CHOICE" -lt 1 ] || [ "$IDE_CHOICE" -gt "$COUNT" ]; then
     echo "Invalid choice. Exiting."
@@ -77,7 +91,8 @@ done
 echo "======================================"
 echo ""
 
-read -p "Select a configuration to install (1-$STAGE_COUNT): " STAGE_CHOICE
+# FIX: Explicitly read from terminal so piped curl doesn't break it
+read -p "Select a configuration to install (1-$STAGE_COUNT): " STAGE_CHOICE </dev/tty
 
 if ! [[ "$STAGE_CHOICE" =~ ^[0-9]+$ ]] || [ "$STAGE_CHOICE" -lt 1 ] || [ "$STAGE_CHOICE" -gt "$STAGE_COUNT" ]; then
     echo "Invalid selection. Exiting."
@@ -117,3 +132,4 @@ curl -fsSL "$CONFIG_URL" -o "$SETTINGS_FILE"
 chmod 444 "$SETTINGS_FILE"
 
 echo "Successfully installed and locked $SELECTED_BRANCH config for $IDE!"
+```](#)
