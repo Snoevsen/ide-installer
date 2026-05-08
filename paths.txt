@@ -1,0 +1,14 @@
+# FORMAT: ide:os:path
+# Note: Use literal $HOME for macOS/Linux paths, and literal $APPDATA or $LOCALAPPDATA for Windows paths.
+
+vscode:linux:$HOME/.config/Code/User/settings.json
+vscode:macos:$HOME/Library/Application Support/Code/User/settings.json
+vscode:windows:$APPDATA\Code\User\settings.json
+
+zed:linux:$HOME/.config/zed/settings.json
+zed:macos:$HOME/.config/zed/settings.json
+zed:windows:$LOCALAPPDATA\Zed\settings.json
+
+kate:linux:$HOME/.config/katerc
+kate:macos:$HOME/Library/Preferences/katerc
+kate:windows:$LOCALAPPDATA\kate\katerc
